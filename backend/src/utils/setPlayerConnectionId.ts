@@ -1,8 +1,8 @@
 import createHttpError from 'http-errors';
-import { RedisClient } from 'redis';
-import { promisify } from 'util';
+import * as redis from 'redis';
 
-export async function setPlayerConnectionId(playerId: string, connectionId: string, client: RedisClient) {
+
+export async function setPlayerConnectionId(playerId: string, connectionId: string, client: ReturnType<typeof redis.createClient>) {
 
   if(!playerId) {
     throw new createHttpError.BadRequest('Connection ID cannot be null');

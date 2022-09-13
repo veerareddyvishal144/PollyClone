@@ -1,5 +1,5 @@
-org: hettest
-app: seproject
+org: vishal124
+app: aws-node
 service:
   name: backend
 frameworkVersion: '2'

@@ -1,18 +1,29 @@
 import middy, { MiddlewareObj } from '@middy/core'
 import httpJsonBodyParser from '@middy/http-json-body-parser'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import redis from 'redis';
+import * as redis from 'redis';
 import { setPlayerConnectionId } from './utils/setPlayerConnectionId';
 
 const client = redis.createClient({
+  socket:{
   host: process.env.REDIS_URL,
-  password: process.env.REDIS_PASSWORD,
-})
+  port: 6379,
+  }
+});
 
+client.on('error', (err) => console.log('Redis Client Error', err));
+
+client.connect().then((e)=>{
+  console.log(e);
+  console.log("Success");
+}).catch(err=>{
+  console.log("Error");
+  console.log(err);
+});
 let handler = middy(async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-
+//console.log(event);
   const body: any = event.body;
   const { connectionId, routeKey } = event.requestContext;
   const { playerId } = event.body as any;
