@@ -16,15 +16,12 @@ client.on('error', (err) => console.log('Redis Client Error', err));
 client.connect().then((e)=>{
   console.log(e);
   console.log("Success");
-}).catch(err=>{
-  console.log("Error");
-  console.log(err);
 });
 let handler = middy(async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
 //console.log(event);
-  const body: any = event.body;
+
   const { connectionId, routeKey } = event.requestContext;
   const { playerId } = event.body as any;
 

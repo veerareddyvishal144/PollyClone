@@ -12,9 +12,13 @@ const prisma = new PrismaClient()
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  const { playerId, name, title } = event.body as any;
-
-  const {room, token} = await createRoomCore(playerId, name, title, prisma);
+ 
+  var x = event.body as any;
+ 
+  var x = JSON.parse(x||'{}');
+  const { playerId, name, title } = x;
+  console.log(playerId);
+  const {room, token,player} = await createRoomCore(playerId, name, title, prisma);
 
   await prisma.$disconnect();
 
@@ -22,19 +26,16 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     statusCode: 200,
     body: JSON.stringify({
       room,
-      token
+      token,
+      player
     })
   }
 })
 
 handler
   .use(httpJsonBodyParser())
-  .use(checkAuth())
-  .use(validateEventSchema(Joi.object({
-    playerId: Joi.string(),
-    name: Joi.string().required(),
-    title: Joi.string().required(),
-  })))
+ 
+
   .use(httpErrorHandler())
   .use(cors({
     origin: process.env.ALLOWED_ORIGIN
