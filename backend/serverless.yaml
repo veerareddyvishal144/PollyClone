@@ -30,7 +30,7 @@ functions:
     events:
       - http:
           path: /hello
-          method: GET
+          method: POST
           cors:
             origin: ${env:ALLOWED_ORIGIN}
             headers:
