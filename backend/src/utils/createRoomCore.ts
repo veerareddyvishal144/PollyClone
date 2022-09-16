@@ -27,5 +27,5 @@ export async function createRoomCore(playerId: string | undefined, name: string,
     }
   });
 
-  return {room, token};
+  return {room, token,player};
 }

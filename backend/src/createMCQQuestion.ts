@@ -14,8 +14,11 @@ const prisma = new PrismaClient()
 
 const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  const { playerId, roomId, title, options } = event.body as any;
-
+  
+  var x = event.body as any;
+ 
+  var x = JSON.parse(x||'{}');
+  const { playerId, roomId, title, options } = x;
   const {question, options: _options} = await createMcqQuestionCore(playerId, roomId, title, options);
   
   await prisma.$disconnect();
@@ -33,16 +36,7 @@ const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
 
 handler
   .use(httpJsonBodyParser())
-  .use(checkAuth({ blockExecution: true })) // Block execution if invalid token
-  .use(validateEventSchema(
-    Joi.object({
-      playerId: Joi.string().required(),
-      roomId: Joi.string().required(),
-      title: Joi.string().required(),
-      options: Joi.array().items(
-        Joi.string().required()
-      ).length(4).required(),
-    })))
+
   .use(httpErrorHandler())
   .use(cors({
     origin: process.env.ALLOWED_ORIGIN

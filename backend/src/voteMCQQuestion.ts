@@ -12,7 +12,11 @@ const prisma = new PrismaClient();
 
 const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  const { playerId, questionId, optionId } = event.body as any;
+  
+  var x = event.body as any;
+ 
+  var x = JSON.parse(x||'{}');
+  const { playerId, questionId, optionId } = x;
 
   const playerAnswer = await prisma.playerAnswer.create({
     data: {
@@ -39,12 +43,7 @@ const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
 
 handler
   .use(httpJsonBodyParser())
-  .use(checkAuth({ blockExecution: true }))
-  .use(validateEventSchema(Joi.object({
-    playerId: Joi.string().required(),
-    questionId: Joi.string().required(),
-    optionId: Joi.number().positive().required(),
-  })))
+ 
   .use(httpErrorHandler())
   .use(cors({
     origin: process.env.ALLOWED_ORIGIN

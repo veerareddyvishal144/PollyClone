@@ -11,8 +11,10 @@ import cors from '@middy/http-cors';
 const prisma = new PrismaClient()
 
 const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-
-  const { playerId, roomId } = event.body as any;
+  var x = event.body as any;
+ 
+  var x = JSON.parse(x||'{}');
+  const { playerId, roomId } = x;
 
   const analytics = await fetchAnalytics(roomId, prisma);
 
@@ -28,11 +30,7 @@ const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayPro
 
 handler
   .use(httpJsonBodyParser())
-  .use(checkAuth({blockExecution: true}))
-  .use(validateEventSchema(Joi.object({
-    playerId: Joi.string().required(),
-    roomId: Joi.string().required(),
-  })))
+
   .use(httpErrorHandler())
   .use(cors({
     origin: process.env.ALLOWED_ORIGIN
